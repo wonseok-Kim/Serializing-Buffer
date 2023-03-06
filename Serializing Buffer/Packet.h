@@ -1,182 +1,325 @@
 #pragma once
 
+#include <memory.h>
+
 class Packet
 {
 public:
-	Packet() {}
-	~Packet() {}
+	Packet()
+	{
+		Init(DEFAULT_BUFFER_SIZE);
+	}
+
+	Packet(int bufferSize)
+	{
+		Init(bufferSize);
+	}
+
+	~Packet()
+	{
+		delete[] m_pExtendedBuffer;
+	}
 
 	void Clear()
 	{
-		m_pFront = m_buffer;
-		m_pRear = m_buffer;
+		m_pReadPos = m_pBuffer;
+		m_pWritePos = m_pBuffer;
+
+		m_useSize = 0;
 	}
 
-	int GetBufferSize() {
+	int GetBufferSize() 
+	{
 		return m_bufferSize;
 	}
 
-	int GetDataSize() {
-		return m_dataSize;
+	int GetUseSize() 
+	{
+		return m_useSize;
 	}
 
-	char* GetBufferPtr() { return m_buffer; }
+	char* GetBufferPtr() 
+	{ 
+		return m_pBuffer; 
+	}
 
-	int MoveFront(int size);
-	int MoveRear(int size);
+	int MoveReadPos(int size)
+	{
+		if (size > m_useSize)
+			size = m_useSize;
 
-	int GetData(void* dst, int size);
-	int PutData(void* src, int size);
+		m_pReadPos += size;
+		m_useSize -= size;
+		return size;
 
-	Packet& operator =(Packet& srcPacket);
+	}
+	int MoveWritePos(int size)
+	{
+		int freeSize = m_bufferSize - m_useSize;
+		if (size > freeSize)
+			size = freeSize;
+
+		m_pWritePos += size;
+		m_useSize += size;
+		return size;
+	}
+
+	int GetData(void* dst, int size)
+	{
+		if (m_useSize < size)
+			size = m_useSize;
+
+		memcpy(dst, m_pReadPos, size);
+		m_pReadPos += size;
+		m_useSize -= size;
+
+		return size;
+	}
+
+	int PutData(void* src, int size)
+	{
+		int freeSize = m_bufferSize - m_useSize;
+		if (freeSize < size)
+			size = freeSize;
+
+		memcpy(m_pWritePos, src, size);
+		m_pWritePos += size;
+		m_useSize += size;
+
+		return size;
+	}
+
+	//Packet& operator =(Packet& srcPacket);
 
 	Packet& operator <<(unsigned __int8 value)
 	{
-		*(unsigned __int8*)m_pRear = value;
-		m_pRear += sizeof(value);
+		*(unsigned __int8*)m_pWritePos = value;
+		m_pWritePos += sizeof(value);
+		m_useSize += sizeof(value);
 		return *this;
 	}
 	Packet& operator <<(__int8 value)
 	{
-		*(__int8*)m_pRear = value;
-		m_pRear += sizeof(value);
+		*(__int8*)m_pWritePos = value;
+		m_pWritePos += sizeof(value);
+		m_useSize += sizeof(value);
 		return *this;
 	}
 
 	Packet& operator <<(unsigned __int16 value)
 	{
-		*(unsigned __int16*)m_pRear = value;
-		m_pRear += sizeof(value);
+		*(unsigned __int16*)m_pWritePos = value;
+		m_pWritePos += sizeof(value);
+		m_useSize += sizeof(value);
 		return *this;
 	}
 	Packet& operator <<(__int16 value)
 	{
-		*(__int16*)m_pRear = value;
-		m_pRear += sizeof(value);
+		*(__int16*)m_pWritePos = value;
+		m_pWritePos += sizeof(value);
+		m_useSize += sizeof(value);
 		return *this;
 	}
 
 	Packet& operator <<(unsigned __int32 value)
 	{
-		*(unsigned __int32*)m_pRear = value;
-		m_pRear += sizeof(value);
+		*(unsigned __int32*)m_pWritePos = value;
+		m_pWritePos += sizeof(value);
+		m_useSize += sizeof(value);
 		return *this;
 	}
 	Packet& operator <<(__int32 value)
 	{
-		*(__int32*)m_pRear = value;
-		m_pRear += sizeof(value);
+		*(__int32*)m_pWritePos = value;
+		m_pWritePos += sizeof(value);
+		m_useSize += sizeof(value);
 		return *this;
 	}
 	Packet& operator << (float value)
 	{
-		*(float*)m_pRear = value;
-		m_pRear += sizeof(value);
+		*(float*)m_pWritePos = value;
+		m_pWritePos += sizeof(value);
+		m_useSize += sizeof(value);
 		return *this;
 	}
 	Packet& operator <<(long value)
 	{
-		*(long*)m_pRear = value;
-		m_pRear += sizeof(value);
+		*(long*)m_pWritePos = value;
+		m_pWritePos += sizeof(value);
+		m_useSize += sizeof(value);
 		return *this;
 	}
 	Packet& operator <<(unsigned long value)
 	{
-		*(unsigned long*)m_pRear = value;
-		m_pRear += sizeof(value);
+		*(unsigned long*)m_pWritePos = value;
+		m_pWritePos += sizeof(value);
+		m_useSize += sizeof(value);
 		return *this;
 	}
 
 	Packet& operator <<(unsigned __int64 value)
 	{
-		*(unsigned __int64*)m_pRear = value;
-		m_pRear += sizeof(value);
+		*(unsigned __int64*)m_pWritePos = value;
+		m_pWritePos += sizeof(value);
+		m_useSize += sizeof(value);
 		return *this;
 	}
 	Packet& operator <<(__int64 value)
 	{
-		*(__int64*)m_pRear = value;
-		m_pRear += sizeof(value);
+		*(__int64*)m_pWritePos = value;
+		m_pWritePos += sizeof(value);
+		m_useSize += sizeof(value);
 		return *this;
 	}
 	Packet& operator <<(double value)
 	{
-		*(double*)m_pRear = value;
-		m_pRear += sizeof(value);
+		*(double*)m_pWritePos = value;
+		m_pWritePos += sizeof(value);
+		m_useSize += sizeof(value);
 		return *this;
 	}
 
 	Packet& operator >>(unsigned __int8& value)
 	{
-		value = *(unsigned __int8*)m_pFront;
-		m_pFront += sizeof(value);
+		value = *(unsigned __int8*)m_pReadPos;
+		m_pReadPos += sizeof(value);
+		m_useSize -= sizeof(value);
 		return *this;
 	}
 	Packet& operator >>(__int8& value)
 	{
-		value = *(__int8*)m_pFront;
-		m_pFront += sizeof(value);
+		value = *(__int8*)m_pReadPos;
+		m_pReadPos += sizeof(value);
+		m_useSize -= sizeof(value);
 		return *this;
 	}
 
-	Packet& operator >>(unsigned __int16 value) {
-		value = *(unsigned __int16*)m_pFront;
-		m_pFront += sizeof(value);
+	Packet& operator >>(unsigned __int16& value) {
+		value = *(unsigned __int16*)m_pReadPos;
+		m_pReadPos += sizeof(value);
+		m_useSize -= sizeof(value);
 		return *this;
 	}
-	Packet& operator >>(__int16 value)
+	Packet& operator >>(__int16& value)
 	{
-		value = *(__int16*)m_pFront;
-		m_pFront += sizeof(value);
+		value = *(__int16*)m_pReadPos;
+		m_pReadPos += sizeof(value);
+		m_useSize -= sizeof(value);
 		return *this;
 	}
 
-	Packet& operator >>(unsigned __int32 value)
+	Packet& operator >>(unsigned __int32& value)
 	{
-		value = *(unsigned __int32*)m_pFront;
-		m_pFront += sizeof(value);
+		value = *(unsigned __int32*)m_pReadPos;
+		m_pReadPos += sizeof(value);
+		m_useSize -= sizeof(value);
 		return *this;
 	}
-	Packet& operator >>(__int32 value)
+	Packet& operator >>(__int32& value)
 	{
-		value = *(__int32*)m_pFront;
-		m_pFront += sizeof(value);
+		value = *(__int32*)m_pReadPos;
+		m_pReadPos += sizeof(value);
+		m_useSize -= sizeof(value);
 		return *this;
 	}
-	Packet& operator >> (float value)
+	Packet& operator >> (float& value)
 	{
-		value = *(float*)m_pFront;
-		m_pFront += sizeof(value);
+		value = *(float*)m_pReadPos;
+		m_pReadPos += sizeof(value);
+		m_useSize -= sizeof(value);
+		return *this;
+	}
+	Packet& operator >>(long& value)
+	{
+		value = *(long*)m_pReadPos;
+		m_pReadPos += sizeof(value);
+		m_useSize -= sizeof(value);
+		return *this;
+	}
+	Packet& operator >>(unsigned long& value)
+	{
+		value = *(unsigned long*)m_pReadPos;
+		m_pReadPos += sizeof(value);
+		m_useSize -= sizeof(value);
 		return *this;
 	}
 
-	Packet& operator >>(unsigned __int64 value)
+	Packet& operator >>(unsigned __int64& value)
 	{
-		value = *(unsigned __int64*)m_pFront;
-		m_pFront += sizeof(value);
+		value = *(unsigned __int64*)m_pReadPos;
+		m_pReadPos += sizeof(value);
+		m_useSize -= sizeof(value);
 		return *this;
 	}
-	Packet& operator >>(__int64 value)
+	Packet& operator >>(__int64& value)
 	{
-		value = *(__int64*)m_pFront;
-		m_pFront += sizeof(value);
+		value = *(__int64*)m_pReadPos;
+		m_pReadPos += sizeof(value);
+		m_useSize -= sizeof(value);
 		return *this;
 	}
-	Packet& operator >>(double value)
+	Packet& operator >>(double& value)
 	{
-		value = *(double*)m_pFront;
-		m_pFront += sizeof(value);
+		value = *(double*)m_pReadPos;
+		m_pReadPos += sizeof(value);
+		m_useSize -= sizeof(value);
 		return *this;
 	}
 
+private:
+	void Init(int bufferSize)
+	{
+		m_bufferSize = bufferSize;
+		m_useSize = 0;
+
+		if (DEFAULT_BUFFER_SIZE < m_bufferSize)
+		{
+			m_pExtendedBuffer = new char[m_bufferSize];
+			m_pBuffer = m_pExtendedBuffer;			
+		}
+		else
+		{
+			m_pExtendedBuffer = nullptr;			
+			m_pBuffer = m_defaultBuffer;			
+		}
+
+		m_pEndOfBuffer = m_pBuffer + m_bufferSize;
+
+		m_pReadPos = m_pBuffer;
+		m_pWritePos = m_pBuffer;
+	}
+
+	template <typename T>
+	Packet& Input(T value)
+	{
+		*(T*)m_pWritePos = value;
+		m_pWritePos += sizeof(value);
+		m_useSize += sizeof(value);
+		return *this;
+	}
+
+	template <typename T>
+	Packet& OperatorOut(T& value)
+	{
+		value = *(T*)m_pReadPos;
+		m_pReadPos += sizeof(value);
+		m_useSize -= sizeof(value);
+		return *this;
+	}
 
 private:
 	constexpr static int DEFAULT_BUFFER_SIZE = 1400;
 
-	char m_buffer[DEFAULT_BUFFER_SIZE];
-	char* m_pFront = m_buffer;
-	char* m_pRear = m_buffer;
-	int m_bufferSize = DEFAULT_BUFFER_SIZE;
-	int m_dataSize = 0;
+	char m_defaultBuffer[DEFAULT_BUFFER_SIZE];
+	char* m_pExtendedBuffer;
+
+	char* m_pBuffer;
+	char* m_pEndOfBuffer;
+
+	char* m_pReadPos;
+	char* m_pWritePos;
+
+	int m_bufferSize;
+	int m_useSize;
 };
 
