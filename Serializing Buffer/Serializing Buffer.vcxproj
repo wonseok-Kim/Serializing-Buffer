@@ -132,10 +132,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="Packet.cpp" />
+    <ClCompile Include="CPacket.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Packet.h" />
+    <ClInclude Include="CPacket.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

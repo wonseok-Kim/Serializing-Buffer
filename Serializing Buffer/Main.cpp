@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#include "Packet.h"
+#include "CPacket.h"
 
 struct PacketHeader
 {
