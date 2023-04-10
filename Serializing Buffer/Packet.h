@@ -2,20 +2,20 @@
 
 #include <memory.h>
 
-class Packet
+class CPacket
 {
 public:
-	Packet()
+	CPacket()
 	{
 		Init(DEFAULT_BUFFER_SIZE);
 	}
 
-	Packet(int bufferSize)
+	CPacket(int bufferSize)
 	{
 		Init(bufferSize);
 	}
 
-	~Packet()
+	~CPacket()
 	{
 		delete[] m_pExtendedBuffer;
 	}
@@ -91,14 +91,14 @@ public:
 
 	//Packet& operator =(Packet& srcPacket);
 
-	Packet& operator <<(unsigned __int8 value)
+	CPacket& operator <<(unsigned __int8 value)
 	{
 		*(unsigned __int8*)m_pWritePos = value;
 		m_pWritePos += sizeof(value);
 		m_useSize += sizeof(value);
 		return *this;
 	}
-	Packet& operator <<(__int8 value)
+	CPacket& operator <<(__int8 value)
 	{
 		*(__int8*)m_pWritePos = value;
 		m_pWritePos += sizeof(value);
@@ -106,14 +106,14 @@ public:
 		return *this;
 	}
 
-	Packet& operator <<(unsigned __int16 value)
+	CPacket& operator <<(unsigned __int16 value)
 	{
 		*(unsigned __int16*)m_pWritePos = value;
 		m_pWritePos += sizeof(value);
 		m_useSize += sizeof(value);
 		return *this;
 	}
-	Packet& operator <<(__int16 value)
+	CPacket& operator <<(__int16 value)
 	{
 		*(__int16*)m_pWritePos = value;
 		m_pWritePos += sizeof(value);
@@ -121,35 +121,35 @@ public:
 		return *this;
 	}
 
-	Packet& operator <<(unsigned __int32 value)
+	CPacket& operator <<(unsigned __int32 value)
 	{
 		*(unsigned __int32*)m_pWritePos = value;
 		m_pWritePos += sizeof(value);
 		m_useSize += sizeof(value);
 		return *this;
 	}
-	Packet& operator <<(__int32 value)
+	CPacket& operator <<(__int32 value)
 	{
 		*(__int32*)m_pWritePos = value;
 		m_pWritePos += sizeof(value);
 		m_useSize += sizeof(value);
 		return *this;
 	}
-	Packet& operator << (float value)
+	CPacket& operator << (float value)
 	{
 		*(float*)m_pWritePos = value;
 		m_pWritePos += sizeof(value);
 		m_useSize += sizeof(value);
 		return *this;
 	}
-	Packet& operator <<(long value)
+	CPacket& operator <<(long value)
 	{
 		*(long*)m_pWritePos = value;
 		m_pWritePos += sizeof(value);
 		m_useSize += sizeof(value);
 		return *this;
 	}
-	Packet& operator <<(unsigned long value)
+	CPacket& operator <<(unsigned long value)
 	{
 		*(unsigned long*)m_pWritePos = value;
 		m_pWritePos += sizeof(value);
@@ -157,21 +157,21 @@ public:
 		return *this;
 	}
 
-	Packet& operator <<(unsigned __int64 value)
+	CPacket& operator <<(unsigned __int64 value)
 	{
 		*(unsigned __int64*)m_pWritePos = value;
 		m_pWritePos += sizeof(value);
 		m_useSize += sizeof(value);
 		return *this;
 	}
-	Packet& operator <<(__int64 value)
+	CPacket& operator <<(__int64 value)
 	{
 		*(__int64*)m_pWritePos = value;
 		m_pWritePos += sizeof(value);
 		m_useSize += sizeof(value);
 		return *this;
 	}
-	Packet& operator <<(double value)
+	CPacket& operator <<(double value)
 	{
 		*(double*)m_pWritePos = value;
 		m_pWritePos += sizeof(value);
@@ -179,14 +179,14 @@ public:
 		return *this;
 	}
 
-	Packet& operator >>(unsigned __int8& value)
+	CPacket& operator >>(unsigned __int8& value)
 	{
 		value = *(unsigned __int8*)m_pReadPos;
 		m_pReadPos += sizeof(value);
 		m_useSize -= sizeof(value);
 		return *this;
 	}
-	Packet& operator >>(__int8& value)
+	CPacket& operator >>(__int8& value)
 	{
 		value = *(__int8*)m_pReadPos;
 		m_pReadPos += sizeof(value);
@@ -194,13 +194,13 @@ public:
 		return *this;
 	}
 
-	Packet& operator >>(unsigned __int16& value) {
+	CPacket& operator >>(unsigned __int16& value) {
 		value = *(unsigned __int16*)m_pReadPos;
 		m_pReadPos += sizeof(value);
 		m_useSize -= sizeof(value);
 		return *this;
 	}
-	Packet& operator >>(__int16& value)
+	CPacket& operator >>(__int16& value)
 	{
 		value = *(__int16*)m_pReadPos;
 		m_pReadPos += sizeof(value);
@@ -208,35 +208,35 @@ public:
 		return *this;
 	}
 
-	Packet& operator >>(unsigned __int32& value)
+	CPacket& operator >>(unsigned __int32& value)
 	{
 		value = *(unsigned __int32*)m_pReadPos;
 		m_pReadPos += sizeof(value);
 		m_useSize -= sizeof(value);
 		return *this;
 	}
-	Packet& operator >>(__int32& value)
+	CPacket& operator >>(__int32& value)
 	{
 		value = *(__int32*)m_pReadPos;
 		m_pReadPos += sizeof(value);
 		m_useSize -= sizeof(value);
 		return *this;
 	}
-	Packet& operator >> (float& value)
+	CPacket& operator >> (float& value)
 	{
 		value = *(float*)m_pReadPos;
 		m_pReadPos += sizeof(value);
 		m_useSize -= sizeof(value);
 		return *this;
 	}
-	Packet& operator >>(long& value)
+	CPacket& operator >>(long& value)
 	{
 		value = *(long*)m_pReadPos;
 		m_pReadPos += sizeof(value);
 		m_useSize -= sizeof(value);
 		return *this;
 	}
-	Packet& operator >>(unsigned long& value)
+	CPacket& operator >>(unsigned long& value)
 	{
 		value = *(unsigned long*)m_pReadPos;
 		m_pReadPos += sizeof(value);
@@ -244,21 +244,21 @@ public:
 		return *this;
 	}
 
-	Packet& operator >>(unsigned __int64& value)
+	CPacket& operator >>(unsigned __int64& value)
 	{
 		value = *(unsigned __int64*)m_pReadPos;
 		m_pReadPos += sizeof(value);
 		m_useSize -= sizeof(value);
 		return *this;
 	}
-	Packet& operator >>(__int64& value)
+	CPacket& operator >>(__int64& value)
 	{
 		value = *(__int64*)m_pReadPos;
 		m_pReadPos += sizeof(value);
 		m_useSize -= sizeof(value);
 		return *this;
 	}
-	Packet& operator >>(double& value)
+	CPacket& operator >>(double& value)
 	{
 		value = *(double*)m_pReadPos;
 		m_pReadPos += sizeof(value);
@@ -290,7 +290,7 @@ private:
 	}
 
 	template <typename T>
-	Packet& Input(T value)
+	CPacket& Input(T value)
 	{
 		*(T*)m_pWritePos = value;
 		m_pWritePos += sizeof(value);
@@ -299,7 +299,7 @@ private:
 	}
 
 	template <typename T>
-	Packet& OperatorOut(T& value)
+	CPacket& OperatorOut(T& value)
 	{
 		value = *(T*)m_pReadPos;
 		m_pReadPos += sizeof(value);

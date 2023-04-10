@@ -11,7 +11,7 @@ struct PacketHeader
 	BYTE Type;
 };
 
-void mpCreateMyCharacter(Packet* pPacket, DWORD id, BYTE dir, SHORT x, SHORT y)
+void mpCreateMyCharacter(CPacket* pPacket, DWORD id, BYTE dir, SHORT x, SHORT y)
 {
 	PacketHeader header;
 	header.Code = 0x89;
@@ -22,7 +22,7 @@ void mpCreateMyCharacter(Packet* pPacket, DWORD id, BYTE dir, SHORT x, SHORT y)
 	(*pPacket) << id << dir << x << y;
 }
 
-void ProcCreateMyCharacter(Packet* pPacket)
+void ProcCreateMyCharacter(CPacket* pPacket)
 {
 	PacketHeader header;
 	DWORD id;
@@ -37,7 +37,7 @@ void ProcCreateMyCharacter(Packet* pPacket)
 	std::wcout << L"ID: " << id << L" Dir: " << dir << L" X: " << x << L" Y: " << y;
 }
 
-void Marshalling(Packet& packet)
+void Marshalling(CPacket& packet)
 {
 	CHAR a;
 	UCHAR b;
@@ -111,7 +111,7 @@ int wmain()
 	DWORD m1 = 0;
 	DWORD m2 = 0xffffffff;
 
-	Packet packet;
+	CPacket packet;
 
 	packet << a1 << b1 << c1 << d1 << e1 << f1 << g1 << h1 << i1 << j1 << k1 << l1 << m1;
 
